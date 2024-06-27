@@ -1,0 +1,54 @@
+.adminContainer {
+  padding: 20px;
+}
+
+.errorMessage {
+  color: red;
+}
+
+.addRoleForm {
+  margin-bottom: 20px;
+}
+
+.inputField {
+  margin-right: 10px;
+}
+
+.submitButton {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px;
+}
+
+.cancelButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-left: 10px;
+}
+
+.roleList {
+  list-style: none;
+  padding: 0;
+}
+
+.roleItem {
+  margin-bottom: 10px;
+}
+
+.editButton,
+.deleteButton {
+  background-color: #008CBA;
+  color: white;
+  border: none;
+  padding: 5px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.editRoleForm {
+  display: flex;
+  align-items: center;
+}

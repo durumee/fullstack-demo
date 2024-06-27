@@ -1,0 +1,30 @@
+.roleList {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.roleItem {
+  background-color: #e0e0e0;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+
+.deleteRoleButton {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  margin-left: 3px;
+  font-weight: bold;
+}
+
+.deleteRoleButton:hover {
+  color: darkred;
+}
+
+.errorMessage {
+  color: red;
+}
