@@ -1,5 +1,3 @@
-// src/utils/fetchWithAuth.js
-
 const fetchWithAuth = async (url, options = {}) => {
   let token = sessionStorage.getItem("accessToken");
 

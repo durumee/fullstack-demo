@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import styles from "./AdminRoles.module.css";
 import fetchWithAuth from "../util/fetchWithAuth";
 
 const AdminRoles = () => {
@@ -49,7 +48,7 @@ const AdminRoles = () => {
   const handleAddRole = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetchWithAuth("http://localhost:8080/admin/roles/", {
+      const response = await fetchWithAuth("http://localhost:8080/admin/roles", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -94,46 +93,62 @@ const AdminRoles = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   return (
-    <div className={styles.adminContainer}>
-      <h1>역할 관리</h1>
-      {error && <p className={styles.errorMessage}>{error}</p>}
-      <form onSubmit={handleAddRole} className={styles.addRoleForm}>
-        <input
-          type="text"
-          placeholder="역할 이름"
-          value={newRole}
-          onChange={handleRoleInputChange}
-          className={styles.inputField}
-          required
-        />
-        <button type="submit" className={styles.submitButton}>역할 추가</button>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">역할 관리</h1>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <form onSubmit={handleAddRole} className="mb-8 bg-white shadow-md rounded px-8 pt-6 pb-8">
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="역할 이름"
+            value={newRole}
+            onChange={handleRoleInputChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            역할 추가
+          </button>
+        </div>
       </form>
-      <ul className={styles.roleList}>
+      <ul className="bg-white shadow-md rounded px-8 pt-6 pb-8">
         {roles.map(role => (
-          <li key={role.id} className={styles.roleItem}>
+          <li key={role.id} className="mb-4 pb-4 border-b last:border-b-0">
             {editRole && editRole.id === role.id ? (
-              <form onSubmit={handleEditRoleSubmit} className={styles.editRoleForm}>
+              <form onSubmit={handleEditRoleSubmit} className="flex items-center">
                 <input
                   type="text"
                   name="name"
                   value={editRole.name}
                   onChange={handleEditRoleChange}
-                  className={styles.inputField}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2"
                   required
                 />
-                <button type="submit" className={styles.submitButton}>저장</button>
-                <button type="button" onClick={() => setEditRole(null)} className={styles.cancelButton}>취소</button>
+                <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+                  저장
+                </button>
+                <button type="button" onClick={() => setEditRole(null)} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                  취소
+                </button>
               </form>
             ) : (
-              <>
-                {role.name}
-                <button onClick={() => setEditRole(role)} className={styles.editButton}>수정</button>
-                <button onClick={() => handleDeleteRole(role.id)} className={styles.deleteButton}>삭제</button>
-              </>
+              <div className="flex justify-between items-center">
+                <span>{role.name}</span>
+                <div>
+                  <button onClick={() => setEditRole(role)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+                    수정
+                  </button>
+                  <button onClick={() => handleDeleteRole(role.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    삭제
+                  </button>
+                </div>
+              </div>
             )}
           </li>
         ))}

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import styles from "./AdminUsers.module.css";
 import fetchWithAuth from "../util/fetchWithAuth";
 
 const AdminUsers = () => {
@@ -101,64 +100,83 @@ const AdminUsers = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   return (
-    <div className={styles.adminContainer}>
-      <h1>사용자 관리</h1>
-      {error && <p className={styles.errorMessage}>{error}</p>}
-      <form onSubmit={handleAddUser} className={styles.addUserForm}>
-        <input
-          type="text"
-          name="username"
-          placeholder="아이디"
-          value={newUser.username}
-          onChange={handleChange}
-          className={styles.inputField}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="비밀번호"
-          value={newUser.password}
-          onChange={handleChange}
-          className={styles.inputField}
-          required
-        />
-        <select
-          name="roles"
-          value={newUser.roles.map(role => role.id)}
-          onChange={handleChange}
-          className={styles.inputField}
-          required
-          multiple
-        >
-          {roles.map(role => (
-            <option key={role.id} value={role.id}>{role.name}</option>
-          ))}
-        </select>
-        <button type="submit" className={styles.submitButton}>사용자 추가</button>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">사용자 관리</h1>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <form onSubmit={handleAddUser} className="mb-8 bg-white shadow-md rounded px-8 pt-6 pb-8">
+        <div className="mb-4">
+          <input
+            type="text"
+            name="username"
+            placeholder="아이디"
+            value={newUser.username}
+            onChange={handleChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="password"
+            name="password"
+            placeholder="비밀번호"
+            value={newUser.password}
+            onChange={handleChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <select
+            name="roles"
+            value={newUser.roles.map(role => role.id)}
+            onChange={handleChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+            multiple
+          >
+            {roles.map(role => (
+              <option key={role.id} value={role.id}>{role.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center justify-between">
+          <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            사용자 추가
+          </button>
+        </div>
       </form>
-      <ul className={styles.userList}>
+      <ul className="bg-white shadow-md rounded px-8 pt-6 pb-8">
         {users.map(user => (
-          <li key={user.id} className={styles.userItem}>
-            {user.username}
-            <div className={styles.roleList}>
-              {user.roles.map(role => (
-                <span key={role.id} className={styles.roleItem}>
-                  {role.name}
-                  <button
-                    onClick={() => handleDeleteRole(user.id, role.id)}
-                    className={styles.deleteRoleButton}
-                  >
-                    x
-                  </button>
-                </span>
-              ))}
+          <li key={user.id} className="mb-4 pb-4 border-b last:border-b-0">
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="font-bold">{user.username}</span>
+                <div className="mt-2">
+                  {user.roles.map(role => (
+                    <span key={role.id} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                      {role.name}
+                      <button
+                        onClick={() => handleDeleteRole(user.id, role.id)}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        x
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <button
+                onClick={() => handleDeleteUser(user.id)}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                삭제
+              </button>
             </div>
-            <button onClick={() => handleDeleteUser(user.id)} className={styles.deleteButton}>삭제</button>
           </li>
         ))}
       </ul>

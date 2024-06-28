@@ -1,43 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
-import { Menu } from 'lucide-react';
-import styles from "./App.module.css";
+import { Menu, Home, ShoppingBag, User, ClipboardList, Settings, LogIn, LogOut } from 'lucide-react';
 import Login from "./component/Login";
 import Logout from "./component/Logout";
-import Cart from "./component/Cart";
-import AdminUsers from "./component/AdminUsers";
-import AdminRoles from "./component/AdminRoles";
-import AdminMembers from "./component/AdminMembers";
-import AdminProducts from "./component/AdminProducts";
-import AdminOrders from "./component/AdminOrders";
-import AdminShoppingLogs from "./component/AdminShoppingLogs";
+import Products from "./component/Products";
+import MemberInfo from "./component/MemberInfo";
+import OrderHistory from './component/OrderHistory';
+
+import AdminApp from "./AdminApp";
 
 // 메인 컴포넌트
 function Main() {
   return (
-    <div>
-      <h1>메인 페이지</h1>
-      <p>환영합니다! 이 페이지는 메인 페이지입니다.</p>
-    </div>
-  );
-}
-
-// About 컴포넌트
-function About() {
-  return (
-    <div>
-      <h1>About 페이지</h1>
-      <p>이 페이지는 About 페이지입니다.</p>
-    </div>
-  );
-}
-
-// Info 컴포넌트
-function Info() {
-  return (
-    <div>
-      <h1>Info 페이지</h1>
-      <p>이 페이지는 Info 페이지입니다.</p>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-4">메인 페이지</h1>
+      <p className="text-lg">환영합니다! 이 페이지는 메인 페이지입니다.</p>
     </div>
   );
 }
@@ -50,6 +27,8 @@ const isAuthenticated = () => {
 const PrivateRoute = ({ element: Element, ...rest }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -63,7 +42,7 @@ const PrivateRoute = ({ element: Element, ...rest }) => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
   return isAuth ? (
     <Element {...rest} />
@@ -79,7 +58,7 @@ function App() {
 
   useEffect(() => {
     const handleAuthChange = () => {
-      setIsAuth(isAuthenticated());
+      // setIsAuth(isAuthenticated());
     };
 
     const handleResize = () => {
@@ -110,85 +89,58 @@ function App() {
 
   const NavLinks = () => (
     <>
-      <li className={styles.navItem}>
-        <Link to="/" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          메인
-        </Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link to="/about" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          About
-        </Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link to="/info" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          Info
-        </Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link to="/cart" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          Cart
-        </Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link to="/admin/members" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          Members
-        </Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link to="/admin/products" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          Products
-        </Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link to="/admin/orders" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          Orders
-        </Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link to="/admin/shopping-logs" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          ShoppingLogs
-        </Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link to="/admin/users" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          Users
-        </Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link to="/admin/roles" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-          Roles
-        </Link>
-      </li>
+      <NavItem to="/" icon={<Home size={20} />} label="메인" />
+      <NavItem to="/products" icon={<ShoppingBag size={20} />} label="상품" />
+      <NavItem to="/member-info" icon={<User size={20} />} label="회원정보" />
+      <NavItem to="/order-history" icon={<ClipboardList size={20} />} label="주문내역" />
+      <NavItem to="/admin" icon={<Settings size={20} />} label="관리자" />
       {isAuth ? (
-        <li className={styles.navItem}>
-          <Logout className={styles.navLink} onLogout={handleLogout} />
+        <li className="my-2 md:my-0">
+          <Logout className="flex items-center text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md transition duration-300 ease-in-out" onLogout={handleLogout}>
+            <LogOut size={20} className="mr-2" />
+            로그아웃
+          </Logout>
         </li>
       ) : (
-        <li className={styles.navItem}>
-          <Link to="/login" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-            Login
-          </Link>
-        </li>
+        <NavItem to="/login" icon={<LogIn size={20} />} label="로그인" />
       )}
     </>
   );
 
+  const NavItem = ({ to, icon, label }) => {
+    const isActive = location.pathname === to;
+    return (
+      <li className="my-2 md:my-0 md:mr-4">
+        <Link
+          to={to}
+          className={`flex items-center px-3 py-2 rounded-md transition duration-300 ease-in-out ${isActive
+            ? "bg-blue-100 text-blue-800"
+            : "text-blue-600 hover:bg-blue-50 hover:text-blue-800"
+            }`}
+          onClick={() => setIsMenuOpen(false)}
+        >
+          {icon}
+          <span className="ml-2">{label}</span>
+        </Link>
+      </li>
+    );
+  };
+
   return (
     <Router>
-      <div>
+      <div className="min-h-screen bg-gray-100">
         {isMobile ? (
           <>
             <button
               onClick={toggleMenu}
-              className={`${styles.hamburgerButton} fixed top-4 right-4 z-50 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors`}
+              className="fixed top-4 right-4 z-50 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors"
             >
               <Menu size={24} />
             </button>
             {isMenuOpen && (
-              <div className={`${styles.mobileMenu} fixed inset-0 bg-white z-40`}>
+              <div className="fixed inset-0 bg-white z-40 p-4">
                 <nav>
-                  <ul className={`${styles.mobileNavList} pt-16`}>
+                  <ul className="flex flex-col items-start pt-16">
                     <NavLinks />
                   </ul>
                 </nav>
@@ -196,25 +148,22 @@ function App() {
             )}
           </>
         ) : (
-          <nav className={styles.navBar}>
-            <ul className={styles.navList}>
-              <NavLinks />
-            </ul>
+          <nav className="bg-white shadow-md">
+            <div className="container mx-auto px-4">
+              <ul className="flex justify-center items-center h-16">
+                <NavLinks />
+              </ul>
+            </div>
           </nav>
         )}
-        <div className={styles.content}>
+        <div className="container mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/products" element={<Products />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/info" element={<PrivateRoute element={Info} />} />
-            <Route path="/admin/users" element={<PrivateRoute element={AdminUsers} />} />
-            <Route path="/admin/roles" element={<PrivateRoute element={AdminRoles} />} />
-            <Route path="/admin/members" element={<PrivateRoute element={AdminMembers} />} />
-            <Route path="/admin/products" element={<PrivateRoute element={AdminProducts} />} />
-            <Route path="/admin/orders" element={<PrivateRoute element={AdminOrders} />} />
-            <Route path="/admin/shopping-logs" element={<PrivateRoute element={AdminShoppingLogs} />} />
-            <Route path="/cart" element={<Cart />} />
+            <Route path="/member-info" element={<PrivateRoute element={MemberInfo} />} />
+            <Route path="/order-history" element={<PrivateRoute element={OrderHistory} />} />
+            <Route path="/admin/*" element={<PrivateRoute element={AdminApp} />} />
           </Routes>
         </div>
       </div>

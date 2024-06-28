@@ -16,19 +16,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/users")
+@PreAuthorize("hasRole('ADMIN')")
 @Transactional
 public class AdminUserController {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         return ResponseEntity.ok(userDetailsService.createUser(user));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userDetailsService.loadUserById(id)
                 .map(ResponseEntity::ok)
@@ -36,26 +36,23 @@ public class AdminUserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<UserDTO> getAllUsers() {
         return userDetailsService.getAllUsers();
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         return ResponseEntity.ok(userDetailsService.updateUser(id, user));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userDetailsService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{userId}/roles/{roleId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUserRole(@PathVariable Long userId, @PathVariable Long roleId) {
         try {
             userDetailsService.removeRoleFromUser(userId, roleId);

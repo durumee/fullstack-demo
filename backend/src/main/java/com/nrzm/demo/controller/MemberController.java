@@ -6,25 +6,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/admin/members")
 public class MemberController {
 
     @Autowired
     private MemberService memberService;
 
-    @GetMapping
+    @GetMapping("/admin/members")
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<Member> getAllMembers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
         return memberService.getAllMembers(PageRequest.of(page, size));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/admin/members/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Member> getMember(@PathVariable Long id) {
         Member member = memberService.getMemberById(id);
         if (member != null) {
@@ -34,13 +36,15 @@ public class MemberController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/admin/members")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Member> createMember(@RequestBody Member member) {
         Member savedMember = memberService.saveMember(member);
         return ResponseEntity.ok(savedMember);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/admin/members/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Member> updateMember(@PathVariable Long id, @RequestBody Member member) {
         Member existingMember = memberService.getMemberById(id);
         if (existingMember == null) {
@@ -51,7 +55,8 @@ public class MemberController {
         return ResponseEntity.ok(updatedMember);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/members/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
         Member existingMember = memberService.getMemberById(id);
         if (existingMember == null) {
@@ -59,5 +64,21 @@ public class MemberController {
         }
         memberService.deleteMember(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/member")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<Member> getMemberInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Member member = memberService.getMemberByUsername(username);
+        if (member != null) {
+            // 비밀번호와 같은 민감한 정보는 제거
+            member.setPassword(null);
+            return ResponseEntity.ok(member);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

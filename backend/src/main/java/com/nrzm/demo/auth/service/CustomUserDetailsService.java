@@ -6,6 +6,8 @@ import com.nrzm.demo.auth.entity.Role;
 import com.nrzm.demo.auth.entity.User;
 import com.nrzm.demo.auth.repository.RoleRepository;
 import com.nrzm.demo.auth.repository.UserRepository;
+import com.nrzm.demo.entity.Member;
+import com.nrzm.demo.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,25 +31,39 @@ import java.util.stream.Collectors;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public CustomUserDetailsService(UserRepository userRepository, RoleRepository roleRepository, @Lazy PasswordEncoder passwordEncoder) {
+    public CustomUserDetailsService(UserRepository userRepository, MemberRepository memberRepository, RoleRepository roleRepository, @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        // 먼저 User(관리자) 테이블에서 검색
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Set<GrantedAuthority> authorities = user.getRoles().stream()
+                    .map(role -> new SimpleGrantedAuthority(role.getName()))
+                    .collect(Collectors.toSet());
+            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+        }
 
-        Set<GrantedAuthority> grantedAuthorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
+        // User 테이블에 없으면 Member 테이블에서 검색
+        Optional<Member> memberOptional = memberRepository.findByEmail(username);
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            Set<GrantedAuthority> authorities = new HashSet<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
+            return new org.springframework.security.core.userdetails.User(member.getEmail(), member.getPassword(), authorities);
+        }
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
+        throw new UsernameNotFoundException("User not found with username or email: " + username);
     }
 
     public UsernamePasswordAuthenticationToken getAuthenticationToken(String usernameFromToken, HttpServletRequest request) {

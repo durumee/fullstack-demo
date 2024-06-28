@@ -9,31 +9,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/products")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    @GetMapping
+    @GetMapping("/admin/products")
     public Page<Product> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
         return productService.getAllProducts(PageRequest.of(page, size));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/admin/products/{id}")
     public Product getProduct(@PathVariable Long id) {
         return productService.getProductById(id);
     }
 
-    @PostMapping
+    @PostMapping("/admin/products")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product savedProduct = productService.saveProduct(product);
         return ResponseEntity.ok(savedProduct);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/admin/products/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         Product existingProduct = productService.getProductById(id);
         if (existingProduct == null) {
@@ -44,7 +43,7 @@ public class ProductController {
         return ResponseEntity.ok(updatedProduct);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/products/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         Product existingProduct = productService.getProductById(id);
         if (existingProduct == null) {
@@ -52,5 +51,22 @@ public class ProductController {
         }
         productService.deleteProduct(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/products")
+    public Page<Product> getPublicProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productService.getAllProducts(PageRequest.of(page, size));
+    }
+
+    @GetMapping("/api/products/{id}")
+    public ResponseEntity<Product> getPublicProduct(@PathVariable Long id) {
+        Product product = productService.getProductById(id);
+        if (product != null) {
+            return ResponseEntity.ok(product);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -13,30 +13,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/roles")
+@PreAuthorize("hasRole('ADMIN')")
 @Transactional
 public class AdminRoleController {
     @Autowired
     private RoleService roleService;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Role> createRole(@RequestBody Role role) {
         return ResponseEntity.ok(roleService.createRole(role));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<RoleDTO>> getAllRoles() {
         return ResponseEntity.ok(roleService.getAllRoles());
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Role> updateUser(@PathVariable Long id, @RequestBody Role role) throws Exception {
         return ResponseEntity.ok(roleService.updateRole(id, role));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRole(@PathVariable Long id) throws Exception {
         roleService.deleteRole(id);
