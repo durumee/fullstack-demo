@@ -1,0 +1,30 @@
+name: Deploy to Cloudtype
+on:
+  push:
+    branches:
+      - main  # 메인 브랜치에 푸시될 때 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Connect to Cloudtype
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+          repo: ${{ github.repository }}
+          readOnly: true
+      - name: Deploy to Cloudtype
+        uses: cloudtype-github-actions/deploy@v1
+        env:
+          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: durumee/backend   # Cloudtype 프로젝트 이름
+          stage: main  # 배포할 스테이지 이름
+          file: ./Dockerfile  # Dockerfile 경로
+          port: 8080  # 애플리케이션 포트

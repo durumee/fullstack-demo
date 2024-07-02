@@ -1,0 +1,87 @@
+<template>
+  <div class="min-h-screen bg-gray-100">
+    <!-- Mobile Menu -->
+    <template v-if="isMobile">
+      <button @click="toggleMenu"
+        class="fixed top-4 right-4 z-50 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors">
+        <Menu :size="24" />
+      </button>
+      <div v-if="isMenuOpen" class="fixed inset-0 bg-white z-40 p-4">
+        <nav>
+          <ul class="flex flex-col items-start pt-16">
+            <NavLinks :is-auth="isAuth" :current-route="currentRoute" @logout="handleLogout" />
+          </ul>
+        </nav>
+      </div>
+    </template>
+
+    <!-- Desktop Menu -->
+    <nav v-else class="bg-white shadow-md">
+      <div class="container mx-auto px-4">
+        <ul class="flex justify-center items-center h-16">
+          <NavLinks :is-auth="isAuth" :current-route="currentRoute" @logout="handleLogout" />
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+      <router-view @login="handleLogin"></router-view>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { Menu } from 'lucide-vue-next'
+import NavLinks from './components/NavLinks.vue'
+
+const router = useRouter()
+const route = useRoute()
+
+// Reactive state
+const isAuth = ref(false)
+const isMenuOpen = ref(false)
+const isMobile = ref(false)
+
+// Computed properties
+const currentRoute = computed(() => route.path)
+
+// Methods
+const checkAuth = () => {
+  const token = sessionStorage.getItem("accessToken")
+  isAuth.value = !!token
+}
+
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
+const handleLogin = () => {
+  checkAuth()
+}
+
+const handleLogout = () => {
+  sessionStorage.removeItem("accessToken")
+  isAuth.value = false
+  router.push('/pages/login')
+}
+
+onMounted(() => {
+  checkAuth()
+  window.addEventListener("resize", handleResize)
+  handleResize()
+})
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize)
+})
+
+watch(route, () => {
+  checkAuth()
+})
+</script>

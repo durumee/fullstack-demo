@@ -33,8 +33,8 @@ spring:
       #JPA 데이터 소스 초기화를 지연시켜 JPA 스키마가 생성된 후 SQL 스크립트를 실행합니다.
       #src/main/resources/data.sql 방식으로 데이터 초기 적재를 하려면 true 필수
       #Default: false
-    mvc:
-      throw-exception-if-no-handler-found: true
+  mvc:
+    throw-exception-if-no-handler-found: true
 
 server:
   error:

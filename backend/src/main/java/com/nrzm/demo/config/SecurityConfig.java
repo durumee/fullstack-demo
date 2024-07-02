@@ -144,6 +144,7 @@ public class SecurityConfig {
                 "/error/**",
                 "/",
                 "/index.html",
+                "/pages/**",    /*프론트엔드의 컴포넌트 라우팅 경로*/
                 "/favicon.*"
         );
     }

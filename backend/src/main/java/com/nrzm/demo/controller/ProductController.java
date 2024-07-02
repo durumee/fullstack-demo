@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +16,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/admin/products")
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<Product> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
@@ -22,17 +24,20 @@ public class ProductController {
     }
 
     @GetMapping("/admin/products/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Product getProduct(@PathVariable Long id) {
         return productService.getProductById(id);
     }
 
     @PostMapping("/admin/products")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product savedProduct = productService.saveProduct(product);
         return ResponseEntity.ok(savedProduct);
     }
 
     @PutMapping("/admin/products/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         Product existingProduct = productService.getProductById(id);
         if (existingProduct == null) {
@@ -44,6 +49,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/admin/products/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         Product existingProduct = productService.getProductById(id);
         if (existingProduct == null) {
@@ -54,6 +60,7 @@ public class ProductController {
     }
 
     @GetMapping("/api/products")
+    @PreAuthorize("hasRole('MEMBER')")
     public Page<Product> getPublicProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

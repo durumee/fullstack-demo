@@ -32,6 +32,20 @@ public class Order {
     private List<OrderItem> orderItems;
 
     public enum OrderStatus {
-        PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+        PENDING("주문접수"),
+        PROCESSING("처리중"),
+        SHIPPED("배송중"),
+        DELIVERED("배송완료"),
+        CANCELLED("주문취소");
+
+        private final String description;
+
+        OrderStatus(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
 }

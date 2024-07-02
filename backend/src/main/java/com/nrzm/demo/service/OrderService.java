@@ -1,5 +1,6 @@
 package com.nrzm.demo.service;
 
+import com.nrzm.demo.entity.Member;
 import com.nrzm.demo.entity.Order;
 import com.nrzm.demo.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,11 @@ public class OrderService {
     @Transactional(readOnly = true)
     public Page<Order> getAllOrders(Pageable pageable) {
         return orderRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Order> getAllOrdersByMember(Member member, Pageable pageable) {
+        return orderRepository.findAllByMember(member, pageable);
     }
 
     @Transactional(readOnly = true)

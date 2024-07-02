@@ -89,8 +89,10 @@ public class ServiceDataInitializer {
 
         Order order = new Order();
         order.setMember(member);
+        order.setOrderNumber("1");
         order.setOrderDate(LocalDateTime.now());
         order.setTotalAmount(product.getPrice());
+        order.setStatus(Order.OrderStatus.SHIPPED);
 
         OrderItem orderItem = new OrderItem();
         orderItem.setOrder(order);

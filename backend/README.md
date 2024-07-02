@@ -1,7 +1,26 @@
-> 개발 환경 작업 시 옵션 부여 필요
+> 개발 환경 작업 시 옵션 설정을 해야, 테스트 데이터를 자동으로 생성합니다. 아래 인텔리J 구성 참고
+
 ```shell
 --spring.profiles.active=dev
 ```
+
+> ## 인텔리J 개발 프로젝트 실행 구성
+
+### 인텔리J 상단 메뉴바 오른쪽의 버튼을 눌러 `구성 편집`을 실행
+![img_1.png](docs/intellij/img_1.png)
+
+### 아래처럼 `실행 전` 항목에 외부 도구가 없는 경우 `+` 를 눌러 추가 필요
+![img.png](docs/intellij/img.png)
+
+### `새 작업 추가` 에서 `외부 도구 실행` 선택하고
+![img.png](docs/intellij/img_3.png)
+
+### 외부 도구를 선택하고 역시 상단의 `+` 클릭, 입력항목을 참고해서 입력
+
+![img_2.png](docs/intellij/img_2.png)
+
+> 위와 같이 설정하게 되면 스프링부트 backend 실행 전 최신 프론트엔드 코드를
+> 직접 빌드하고 스프링부트의 정적 자원으로 복사하여 한 서버에서 실행하도록 구성됨
 
 # 스프링부트, JWT인증, 사용자 DB 로그인
 
@@ -13,7 +32,7 @@
 
 스프링 시큐리티 구성으로 웹 요청에 대한 전체 처리 절차는 다음과 같습니다.
 
-![스프링 시큐리티 처리 절차](docs/img.png)
+![스프링 시큐리티 처리 절차](docs/security/img.png)
 
 [출처 Spring Security / Servlet Applications / Authentication / Authentication Architecture](https://docs.spring.io/spring-security/reference/servlet/authentication/architecture.html#servlet-authentication-abstractprocessingfilter)
 
@@ -62,4 +81,4 @@
 
 ### 인증 및 사용의 주요 처리 절차
 
-![현재 프로젝트 구성의 처리 절차](docs/img_1.png)
+![현재 프로젝트 구성의 처리 절차](docs/security/img_1.png)
