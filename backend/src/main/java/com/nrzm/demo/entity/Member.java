@@ -19,4 +19,6 @@ public class Member {
     private String email;
     private String phoneNumber;
     private String address;
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
 }

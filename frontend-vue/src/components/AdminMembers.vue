@@ -2,6 +2,18 @@
   <div class="container mx-auto px-4 py-8 max-w-6xl">
     <h1 class="text-3xl font-bold mb-6">회원 관리</h1>
     <p v-if="error" class="text-red-500 mb-4">{{ error }}</p>
+
+    <!-- 회원 상태 필터 -->
+    <div class="mb-4">
+      <label class="mr-2">회원 상태:</label>
+      <select v-model="memberStatus" @change="fetchMembers" class="border rounded px-2 py-1">
+        <option value="ALL">전체</option>
+        <option value="ACTIVE">활성</option>
+        <option value="DELETED">탈퇴</option>
+      </select>
+    </div>
+
+    <!-- 회원 추가 폼 -->
     <form @submit.prevent="handleAddMember" class="mb-8 bg-white shadow-md rounded px-8 pt-6 pb-8">
       <div class="mb-4 flex flex-wrap -mx-2">
         <div class="w-full md:w-1/2 px-2 mb-4 md:mb-0">
@@ -55,10 +67,12 @@
         </button>
       </div>
     </form>
+
+    <!-- 회원 목록 -->
     <div class="overflow-x-auto">
       <ul class="flex flex-nowrap gap-4 pb-4">
         <li v-for="member in members" :key="member.memberId"
-          class="flex-shrink-0 w-64 bg-white shadow-md rounded-lg p-4">
+          class="flex-shrink-0 w-64 bg-white shadow-md rounded-lg p-4" :class="{ 'opacity-50': member.isDeleted }">
           <template v-if="editMember && editMember.memberId === member.memberId">
             <form @submit.prevent="handleEditMemberSubmit" class="space-y-4">
               <div>
@@ -85,6 +99,14 @@
                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   autocomplete="off">
               </div>
+              <div>
+                <label for="edit-isDeleted" class="block text-sm font-medium text-gray-700">회원 상태</label>
+                <select id="edit-isDeleted" v-model="editMember.isDeleted"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                  <option :value="false">활성</option>
+                  <option :value="true">탈퇴</option>
+                </select>
+              </div>
               <div class="flex justify-end space-x-2">
                 <button type="submit"
                   class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
@@ -103,21 +125,22 @@
               <p class="text-sm text-gray-600">{{ member.email }}</p>
               <p class="text-sm text-gray-600">{{ member.phoneNumber }}</p>
               <p class="text-sm text-gray-600">{{ member.address }}</p>
+              <p class="text-sm" :class="member.isDeleted ? 'text-red-500' : 'text-green-500'">
+                {{ member.isDeleted ? '탈퇴' : '활성' }}
+              </p>
             </div>
             <div class="flex justify-end space-x-2">
               <button @click="setEditMember(member)"
                 class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded text-sm">
                 수정
               </button>
-              <button @click="handleDeleteMember(member.memberId)"
-                class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-sm">
-                삭제
-              </button>
             </div>
           </template>
         </li>
       </ul>
     </div>
+
+    <!-- 페이지네이션 -->
     <div class="flex justify-center items-center mt-6">
       <button @click="prevPage" :disabled="currentPage === 0"
         class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l disabled:opacity-50">
@@ -151,10 +174,11 @@ const newMember = reactive({
 const editMember = ref(null)
 const currentPage = ref(0)
 const totalPages = ref(0)
+const memberStatus = ref('ALL')
 
 const fetchMembers = async () => {
   try {
-    const response = await fetchWithAuth(`/admin/members?page=${currentPage.value}&size=5`)
+    const response = await fetchWithAuth(`/admin/members?page=${currentPage.value}&size=5&status=${memberStatus.value}`)
     if (response.ok) {
       const data = await response.json()
       members.value = data.content
@@ -169,19 +193,6 @@ const fetchMembers = async () => {
 
 onMounted(fetchMembers)
 
-const handleDeleteMember = async (memberId) => {
-  try {
-    const response = await fetchWithAuth(`/admin/members/${memberId}`, {
-      method: 'DELETE',
-    })
-    if (response.ok) {
-      members.value = members.value.filter(member => member.memberId !== memberId)
-    }
-  } catch (err) {
-    error.value = err.message
-  }
-}
-
 const handleAddMember = async () => {
   try {
     const response = await fetchWithAuth('/admin/members', {
@@ -192,15 +203,8 @@ const handleAddMember = async () => {
       body: JSON.stringify(newMember),
     })
     if (response.ok) {
-      const createdMember = await response.json()
-      members.value.push(createdMember)
-      Object.assign(newMember, {
-        username: '',
-        password: '',
-        email: '',
-        phoneNumber: '',
-        address: ''
-      })
+      await fetchMembers()
+      Object.keys(newMember).forEach(key => newMember[key] = '')
     }
   } catch (err) {
     error.value = err.message
@@ -221,10 +225,7 @@ const handleEditMemberSubmit = async () => {
       body: JSON.stringify(editMember.value),
     })
     if (response.ok) {
-      const updatedMember = await response.json()
-      members.value = members.value.map(member =>
-        member.memberId === updatedMember.memberId ? updatedMember : member
-      )
+      await fetchMembers()
       editMember.value = null
     }
   } catch (err) {

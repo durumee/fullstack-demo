@@ -25,6 +25,7 @@
     </nav>
 
     <div class="container mx-auto px-4 py-8">
+      <!-- 라우터에 연결된 컴포넌트를 표시, login 이벤트 발생 시 handleLogin 실행 -->
       <router-view @login="handleLogin"></router-view>
     </div>
   </div>
@@ -39,15 +40,12 @@ import NavLinks from './components/NavLinks.vue'
 const router = useRouter()
 const route = useRoute()
 
-// Reactive state
 const isAuth = ref(false)
 const isMenuOpen = ref(false)
 const isMobile = ref(false)
 
-// Computed properties
 const currentRoute = computed(() => route.path)
 
-// Methods
 const checkAuth = () => {
   const token = sessionStorage.getItem("accessToken")
   isAuth.value = !!token

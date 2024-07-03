@@ -1,7 +1,8 @@
 package com.nrzm.demo.controller;
 
-import com.nrzm.demo.entity.Member;
+import com.nrzm.demo.dto.MemberDTO;
 import com.nrzm.demo.service.MemberService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,65 +20,56 @@ public class MemberController {
 
     @GetMapping("/admin/members")
     @PreAuthorize("hasRole('ADMIN')")
-    public Page<Member> getAllMembers(
+    public ResponseEntity<Page<MemberDTO>> getMembers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        return memberService.getAllMembers(PageRequest.of(page, size));
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "ALL") String status) {
+        Page<MemberDTO> members = memberService.getMembers(PageRequest.of(page, size), status);
+        return ResponseEntity.ok(members);
     }
 
     @GetMapping("/admin/members/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Member> getMember(@PathVariable Long id) {
-        Member member = memberService.getMemberById(id);
-        if (member != null) {
-            return ResponseEntity.ok(member);
-        } else {
+    public ResponseEntity<MemberDTO> getMember(@PathVariable Long id) {
+        try {
+            MemberDTO memberDTO = memberService.getMemberDTOById(id);
+            return ResponseEntity.ok(memberDTO);
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping("/admin/members")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Member> createMember(@RequestBody Member member) {
-        Member savedMember = memberService.saveMember(member);
+    public ResponseEntity<MemberDTO> createMember(@RequestBody MemberDTO memberDTO) {
+        MemberDTO savedMember = memberService.addMember(memberDTO);
         return ResponseEntity.ok(savedMember);
     }
 
     @PutMapping("/admin/members/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Member> updateMember(@PathVariable Long id, @RequestBody Member member) {
-        Member existingMember = memberService.getMemberById(id);
-        if (existingMember == null) {
+    public ResponseEntity<MemberDTO> updateMember(@PathVariable Long id, @RequestBody MemberDTO memberDTO) {
+        try {
+            MemberDTO updatedMember = memberService.updateMember(id, memberDTO);
+            return ResponseEntity.ok(updatedMember);
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new MemberDTO());
         }
-        member.setMemberId(id);
-        Member updatedMember = memberService.saveMember(member);
-        return ResponseEntity.ok(updatedMember);
-    }
-
-    @DeleteMapping("/admin/members/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
-        Member existingMember = memberService.getMemberById(id);
-        if (existingMember == null) {
-            return ResponseEntity.notFound().build();
-        }
-        memberService.deleteMember(id);
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/api/member")
     @PreAuthorize("hasRole('MEMBER')")
-    public ResponseEntity<Member> getMemberInfo() {
+    public ResponseEntity<MemberDTO> getMemberInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        Member member = memberService.getMemberByUsername(username);
-        if (member != null) {
-            // 비밀번호와 같은 민감한 정보는 제거
-            member.setPassword(null);
-            return ResponseEntity.ok(member);
-        } else {
+        try {
+            MemberDTO memberDTO = memberService.getMemberDTOByUsername(username);
+            memberDTO.setPassword(null); // 비밀번호와 같은 민감한 정보는 제거
+            return ResponseEntity.ok(memberDTO);
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }

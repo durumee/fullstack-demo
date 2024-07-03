@@ -29,7 +29,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Home, ShoppingBag, User, ClipboardList, Settings, LogIn, LogOut } from 'lucide-vue-next'
 

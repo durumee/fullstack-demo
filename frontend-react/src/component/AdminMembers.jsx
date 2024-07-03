@@ -15,11 +15,12 @@ const AdminMembers = () => {
   const [editMember, setEditMember] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [memberStatus, setMemberStatus] = useState("ALL");
 
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await fetchWithAuth(`/admin/members?page=${currentPage}&size=5`);
+        const response = await fetchWithAuth(`/admin/members?page=${currentPage}&size=5&status=${memberStatus}`);
         if (response.ok) {
           const data = await response.json();
           setMembers(data.content);
@@ -33,21 +34,7 @@ const AdminMembers = () => {
     };
 
     fetchMembers();
-  }, [currentPage]);
-
-  const handleDeleteMember = async (memberId) => {
-    try {
-      const response = await fetchWithAuth(`/admin/members/${memberId}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setMembers(members.filter(member => member.memberId !== memberId));
-      }
-    } catch (error) {
-      setError(error.message);
-    }
-  };
+  }, [currentPage, memberStatus]);
 
   const handleMemberInputChange = (e) => {
     const { name, value } = e.target;
@@ -83,7 +70,7 @@ const AdminMembers = () => {
 
   const handleEditMemberChange = (e) => {
     const { name, value } = e.target;
-    setEditMember({ ...editMember, [name]: value });
+    setEditMember({ ...editMember, [name]: name === "isDeleted" ? value === "true" : value });
   };
 
   const handleEditMemberSubmit = async (e) => {
@@ -115,6 +102,20 @@ const AdminMembers = () => {
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <h1 className="text-3xl font-bold mb-6">회원 관리</h1>
       {error && <p className="text-red-500 mb-4">{error}</p>}
+
+      <div className="mb-4">
+        <label className="mr-2">회원 상태:</label>
+        <select
+          value={memberStatus}
+          onChange={(e) => setMemberStatus(e.target.value)}
+          className="border rounded px-2 py-1"
+        >
+          <option value="ALL">전체</option>
+          <option value="ACTIVE">활성</option>
+          <option value="DELETED">탈퇴</option>
+        </select>
+      </div>
+
       <form onSubmit={handleAddMember} className="mb-8 bg-white shadow-md rounded px-8 pt-6 pb-8">
         <div className="mb-4 flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-4 md:mb-0">
@@ -202,10 +203,11 @@ const AdminMembers = () => {
           </button>
         </div>
       </form>
+
       <div className="overflow-x-auto">
         <ul className="flex flex-nowrap gap-4 pb-4">
           {members.map(member => (
-            <li key={member.memberId} className="flex-shrink-0 w-64 bg-white shadow-md rounded-lg p-4">
+            <li key={member.memberId} className="flex-shrink-0 w-64 bg-white shadow-md rounded-lg p-4" style={{ opacity: member.isDeleted ? 0.5 : 1 }}>
               {editMember && editMember.memberId === member.memberId ? (
                 <form onSubmit={handleEditMemberSubmit} className="space-y-4">
                   <div>
@@ -258,6 +260,19 @@ const AdminMembers = () => {
                       autoComplete="off"
                     />
                   </div>
+                  <div>
+                    <label htmlFor="edit-isDeleted" className="block text-sm font-medium text-gray-700">회원 상태</label>
+                    <select
+                      id="edit-isDeleted"
+                      name="isDeleted"
+                      value={editMember.isDeleted.toString()}
+                      onChange={handleEditMemberChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    >
+                      <option value="false">활성</option>
+                      <option value="true">탈퇴</option>
+                    </select>
+                  </div>
                   <div className="flex justify-end space-x-2">
                     <button
                       type="submit"
@@ -281,6 +296,9 @@ const AdminMembers = () => {
                     <p className="text-sm text-gray-600">{member.email}</p>
                     <p className="text-sm text-gray-600">{member.phoneNumber}</p>
                     <p className="text-sm text-gray-600">{member.address}</p>
+                    <p className={`text-sm ${member.isDeleted ? 'text-red-500' : 'text-green-500'}`}>
+                      {member.isDeleted ? '탈퇴' : '활성'}
+                    </p>
                   </div>
                   <div className="flex justify-end space-x-2">
                     <button
@@ -289,12 +307,6 @@ const AdminMembers = () => {
                     >
                       수정
                     </button>
-                    <button
-                      onClick={() => handleDeleteMember(member.memberId)}
-                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-sm"
-                    >
-                      삭제
-                    </button>
                   </div>
                 </>
               )}
@@ -302,6 +314,7 @@ const AdminMembers = () => {
           ))}
         </ul>
       </div>
+
       <div className="flex justify-center items-center mt-6">
         <button
           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
