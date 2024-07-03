@@ -24,7 +24,10 @@ function MemberInfo() {
     fetchMemberInfo();
   }, []);
 
-  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+  </div>;
+
   if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
   if (!memberInfo) return <div className="text-center py-10">회원정보를 조회할 수 없습니다.</div>;
 

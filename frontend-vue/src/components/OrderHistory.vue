@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold mb-8 text-gray-800">주문 내역</h1>
-    <div v-if="loading" class="flex justify-center items-center h-screen">
+    <div v-if="loading" class="flex justify-center items-center">
       <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
     </div>
     <div v-else-if="error" class="text-center py-10 text-red-500">{{ error }}</div>

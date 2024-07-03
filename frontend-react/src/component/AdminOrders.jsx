@@ -52,16 +52,25 @@ const AdminOrders = () => {
     setCurrentPage(0);
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "COMPLETED": return "text-green-600";
+      case "PROCESSING": return "text-blue-600";
+      case "CANCELLED": return "text-red-600";
+      default: return "text-gray-600";
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">주문 관리</h1>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      <div className="mb-4">
-        <label htmlFor="sort" className="mr-2">정렬: </label>
+    <div className="container mx-auto px-4 py-8 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6 text-center">주문 관리</h1>
+      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+      <div className="mb-4 flex justify-end">
+        <label htmlFor="sort" className="mr-2 self-center">정렬: </label>
         <select
           id="sort"
           value={sort}
@@ -74,36 +83,39 @@ const AdminOrders = () => {
           <option value="totalAmount,asc">금액 (낮은순)</option>
         </select>
       </div>
-      <ul className="space-y-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {orders.map(order => (
-          <li key={order.id} className="bg-white shadow-md rounded-lg p-6">
-            <div className="mb-4">
-              <h3 className="text-xl font-semibold mb-2">주문 ID: {order.id}</h3>
-              <p className="text-gray-600">주문 번호: {order.orderNumber || "없음"}</p>
-              <p className="text-gray-600">회원: {order.username}</p>
-              <p className="text-gray-600">주문 일자: {new Date(order.orderDate).toLocaleString()}</p>
-              <p className="text-gray-600">총 금액: {order.totalAmount.toLocaleString()} 원</p>
-              <p className="text-gray-600">상태: {order.status || "미정"}</p>
-              <h4 className="font-semibold mt-4 mb-2">주문 항목:</h4>
+          <div key={order.id} className="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div className="px-6 py-4">
+              <div className="font-bold text-xl mb-2">주문 #{order.orderNumber || order.id}</div>
+              <p className="text-gray-700 text-base mb-1">회원: {order.username}</p>
+              <p className="text-gray-700 text-base mb-1">주문일: {new Date(order.orderDate).toLocaleDateString()}</p>
+              <p className="text-gray-700 text-base mb-1">총액: {order.totalAmount.toLocaleString()} 원</p>
+              <p className={`text-base font-semibold ${getStatusColor(order.status)}`}>
+                상태: {order.status || "미정"}
+              </p>
+            </div>
+            <div className="px-6 py-4 bg-gray-100">
+              <h4 className="font-semibold mb-2">주문 항목:</h4>
               <ul className="list-disc pl-5">
                 {order.orderItems.map(item => (
-                  <li key={item.id} className="text-gray-600">
+                  <li key={item.id} className="text-gray-700">
                     {item.productName} - {item.quantity}개, {item.price.toLocaleString()} 원
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="flex justify-end">
+            <div className="px-6 py-4">
               <button
                 onClick={() => handleDeleteOrder(order.id)}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
               >
                 삭제
               </button>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
       <div className="flex justify-center items-center mt-6">
         <button
           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}

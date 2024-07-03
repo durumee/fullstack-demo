@@ -1,29 +1,37 @@
 <template>
   <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6">회원 정보</h1>
-    <div v-if="loading" class="text-center py-10">Loading...</div>
-    <div v-else-if="error" class="text-center py-10 text-red-500">{{ error }}</div>
-    <div v-else-if="!memberInfo" class="text-center py-10">회원정보를 조회할 수 없습니다.</div>
-    <div v-else class="bg-white shadow-md rounded-lg p-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <p class="text-gray-600">이름</p>
-          <p class="text-xl font-semibold">{{ memberInfo.username }}</p>
-        </div>
-        <div>
-          <p class="text-gray-600">이메일</p>
-          <p class="text-xl font-semibold">{{ memberInfo.email }}</p>
-        </div>
-        <div>
-          <p class="text-gray-600">전화번호</p>
-          <p class="text-xl font-semibold">{{ memberInfo.phoneNumber }}</p>
-        </div>
-        <div>
-          <p class="text-gray-600">주소</p>
-          <p class="text-xl font-semibold">{{ memberInfo.address }}</p>
+    <div v-if="loading" class="flex justify-center items-center">
+      <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+    <template v-else>
+      <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6"
+        role="alert">
+        <strong class="font-bold">오류 발생: </strong>
+        <span class="block sm:inline">{{ error }}</span>
+      </div>
+      <div v-else-if="!memberInfo" class="text-center py-10">회원정보를 조회할 수 없습니다.</div>
+      <div v-else class="bg-white shadow-md rounded-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p class="text-gray-600">이름</p>
+            <p class="text-xl font-semibold">{{ memberInfo.username }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600">이메일</p>
+            <p class="text-xl font-semibold">{{ memberInfo.email }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600">전화번호</p>
+            <p class="text-xl font-semibold">{{ memberInfo.phoneNumber }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600">주소</p>
+            <p class="text-xl font-semibold">{{ memberInfo.address }}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 

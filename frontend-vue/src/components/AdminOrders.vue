@@ -1,9 +1,9 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">주문 관리</h1>
-    <p v-if="error" class="text-red-500 mb-4">{{ error }}</p>
-    <div class="mb-4">
-      <label for="sort" class="mr-2">정렬: </label>
+  <div class="container mx-auto px-4 py-8 bg-gray-100 min-h-screen">
+    <h1 class="text-3xl font-bold mb-6 text-center">주문 관리</h1>
+    <p v-if="error" class="text-red-500 mb-4 text-center">{{ error }}</p>
+    <div class="mb-4 flex justify-end">
+      <label for="sort" class="mr-2 self-center">정렬: </label>
       <select id="sort" v-model="sort" @change="handleSortChange"
         class="border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
         <option value="orderDate,desc">날짜 (최신순)</option>
@@ -12,30 +12,33 @@
         <option value="totalAmount,asc">금액 (낮은순)</option>
       </select>
     </div>
-    <ul class="space-y-4">
-      <li v-for="order in orders" :key="order.id" class="bg-white shadow-md rounded-lg p-6">
-        <div class="mb-4">
-          <h3 class="text-xl font-semibold mb-2">주문 ID: {{ order.id }}</h3>
-          <p class="text-gray-600">주문 번호: {{ order.orderNumber || "없음" }}</p>
-          <p class="text-gray-600">회원: {{ order.username }}</p>
-          <p class="text-gray-600">주문 일자: {{ new Date(order.orderDate).toLocaleString() }}</p>
-          <p class="text-gray-600">총 금액: {{ order.totalAmount.toLocaleString() }} 원</p>
-          <p class="text-gray-600">상태: {{ order.status || "미정" }}</p>
-          <h4 class="font-semibold mt-4 mb-2">주문 항목:</h4>
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div v-for="order in orders" :key="order.id" class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4">
+          <div class="font-bold text-xl mb-2">주문 #{{ order.orderNumber || order.id }}</div>
+          <p class="text-gray-700 text-base mb-1">회원: {{ order.username }}</p>
+          <p class="text-gray-700 text-base mb-1">주문일: {{ new Date(order.orderDate).toLocaleDateString() }}</p>
+          <p class="text-gray-700 text-base mb-1">총액: {{ order.totalAmount.toLocaleString() }} 원</p>
+          <p :class="['text-base font-semibold', getStatusColor(order.status)]">
+            상태: {{ order.status || "미정" }}
+          </p>
+        </div>
+        <div class="px-6 py-4 bg-gray-100">
+          <h4 class="font-semibold mb-2">주문 항목:</h4>
           <ul class="list-disc pl-5">
-            <li v-for="item in order.orderItems" :key="item.id" class="text-gray-600">
+            <li v-for="item in order.orderItems" :key="item.id" class="text-gray-700">
               {{ item.productName }} - {{ item.quantity }}개, {{ item.price.toLocaleString() }} 원
             </li>
           </ul>
         </div>
-        <div class="flex justify-end">
+        <div class="px-6 py-4">
           <button @click="handleDeleteOrder(order.id)"
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
             삭제
           </button>
         </div>
-      </li>
-    </ul>
+      </div>
+    </div>
     <div class="flex justify-center items-center mt-6">
       <button @click="prevPage" :disabled="currentPage === 0"
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed">
@@ -114,6 +117,15 @@ const prevPage = () => {
 const nextPage = () => {
   if (currentPage.value < totalPages.value - 1) {
     currentPage.value++
+  }
+}
+
+const getStatusColor = (status) => {
+  switch (status) {
+    case "COMPLETED": return "text-green-600";
+    case "PROCESSING": return "text-blue-600";
+    case "CANCELLED": return "text-red-600";
+    default: return "text-gray-600";
   }
 }
 </script>
