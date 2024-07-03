@@ -107,6 +107,7 @@ public class SecurityConfig {
             , CustomUsernamePasswordAuthenticationFilter customAuthenticationFilter) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().authenticated()
                 )
