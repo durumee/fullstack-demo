@@ -44,7 +44,10 @@ function OrderHistory() {
     <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
   </div>;
 
-  if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
+  if (error) return <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+    <strong className="font-bold">오류 발생: </strong>
+    <span className="block sm:inline">{error}</span>
+  </div>;
 
   return (
     <div className="container mx-auto px-4 py-8">

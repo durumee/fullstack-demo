@@ -129,7 +129,7 @@ const AdminUsers = () => {
             onChange={handleChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
-            autoComplete="off"
+            autoComplete="new-password"
           />
         </div>
         <div className="mb-4">

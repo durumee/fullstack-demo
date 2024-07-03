@@ -1,10 +1,14 @@
 <template>
   <div class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-8 text-gray-800">주문 내역</h1>
+    <h1 class="text-3xl font-bold mb-6">주문 내역</h1>
     <div v-if="loading" class="flex justify-center items-center">
       <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
     </div>
-    <div v-else-if="error" class="text-center py-10 text-red-500">{{ error }}</div>
+    <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6"
+      role="alert">
+      <strong class="font-bold">오류 발생: </strong>
+      <span class="block sm:inline">{{ error }}</span>
+    </div>
     <template v-else>
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div v-for="order in orders" :key="order.id"

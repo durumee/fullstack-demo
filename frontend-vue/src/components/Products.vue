@@ -4,12 +4,12 @@
     <div v-if="loading" class="flex justify-center items-center">
       <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
     </div>
+    <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6"
+      role="alert">
+      <strong class="font-bold">오류 발생: </strong>
+      <span class="block sm:inline">{{ error }}</span>
+    </div>
     <template v-else>
-      <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6"
-        role="alert">
-        <strong class="font-bold">오류 발생: </strong>
-        <span class="block sm:inline">{{ error }}</span>
-      </div>
       <div v-if="products.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div v-for="product in products" :key="product.productId" class="bg-white rounded-lg shadow-md overflow-hidden">
           <img :src="product.imageUrl || 'https://via.placeholder.com/300x200'" :alt="product.name"
