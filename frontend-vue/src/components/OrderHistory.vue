@@ -22,11 +22,11 @@
             </div>
             <div class="space-y-3">
               <div class="flex items-center text-gray-600">
-                <Calendar class="w-5 h-5 mr-2" />
+                <CalendarIcon class="w-5 h-5 mr-2" />
                 <span>{{ new Date(order.orderDate).toLocaleDateString() }}</span>
               </div>
               <div class="flex items-center text-gray-800 font-bold">
-                <CircleDollarSign class="w-5 h-5 mr-2" />
+                <CurrencyDollarIcon class="w-5 h-5 mr-2" />
                 <span>{{ order.totalAmount.toLocaleString() }}원</span>
               </div>
             </div>
@@ -42,7 +42,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-gray-200">
               <div class="flex items-center text-blue-600">
-                <Truck class="w-5 h-5 mr-2" />
+                <TruckIcon class="w-5 h-5 mr-2" />
                 <span class="text-sm font-semibold">배송 추적</span>
               </div>
             </div>
@@ -52,14 +52,14 @@
       <div v-if="totalPages > 1" class="flex justify-center mt-8">
         <button @click="prevPage" :disabled="currentPage === 0"
           class="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed">
-          <ChevronLeft class="w-6 h-6" />
+          <ChevronLeftIcon class="w-6 h-6" />
         </button>
         <span class="mx-4 flex items-center text-gray-700">
           {{ currentPage + 1 }} / {{ totalPages }}
         </span>
         <button @click="nextPage" :disabled="currentPage === totalPages - 1"
           class="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed">
-          <ChevronRight class="w-6 h-6" />
+          <ChevronRightIcon class="w-6 h-6" />
         </button>
       </div>
     </template>
@@ -69,7 +69,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { fetchWithAuth } from "../util/fetchWithAuth";
-import { Calendar, CircleDollarSign, Truck, ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { CalendarIcon, CurrencyDollarIcon, TruckIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/solid';
 
 const orders = ref([]);
 const loading = ref(true);

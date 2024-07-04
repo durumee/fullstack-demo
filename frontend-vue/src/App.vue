@@ -4,7 +4,7 @@
     <template v-if="isMobile">
       <button @click="toggleMenu"
         class="fixed top-4 right-4 z-50 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors">
-        <Menu :size="24" />
+        <Bars3Icon class="h-6 w-6" />
       </button>
       <div v-if="isMenuOpen" class="fixed inset-0 bg-white z-40 p-4">
         <nav>
@@ -34,7 +34,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { Menu } from 'lucide-vue-next'
+import { Bars3Icon } from '@heroicons/vue/24/outline'
 import NavLinks from './components/NavLinks.vue'
 
 const router = useRouter()

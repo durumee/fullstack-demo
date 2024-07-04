@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroicons/vue": "^2.1.4",
     "fs-extra": "^11.2.0",
-    "lucide-vue-next": "^0.400.0",
     "vue": "^3.4.29",
     "vue-router": "^4.4.0"
   },
