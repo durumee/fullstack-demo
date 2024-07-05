@@ -1,15 +1,17 @@
 import { useNavigate, Link } from "react-router-dom";
 
-const Logout = ({ className, onLogout }) => {
+const Logout = ({ className, onLogout, children }) => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
+  const handleLogout = async (event) => {
+    event.preventDefault(); // 링크의 기본 동작 방지
     const token = sessionStorage.getItem("accessToken");
 
     if (token) {
       try {
         const response = await fetch("/invalidate-token", {
           method: "GET",
+          credentials: "include",
           headers: {
             "Authorization": `Bearer ${token}`,
           },
@@ -30,7 +32,7 @@ const Logout = ({ className, onLogout }) => {
 
   return (
     <Link to="#" onClick={handleLogout} className={className}>
-      Logout
+      {children}
     </Link>
   );
 };

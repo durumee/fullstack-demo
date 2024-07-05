@@ -1,6 +1,6 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
-const fetchWithAuth = async (url, options = {}) => {
+export const fetchWithAuth = async (url, options = {}) => {
   let token = sessionStorage.getItem("accessToken");
 
   // 토큰이 없으면 로그인 페이지로 리디렉션
@@ -11,6 +11,7 @@ const fetchWithAuth = async (url, options = {}) => {
 
   const response = await fetch(API_BASE_URL + url, {
     ...options,
+    credentials: 'include',
     headers: {
       ...options.headers,
       Authorization: `Bearer ${token}`,
@@ -40,5 +41,3 @@ const fetchWithAuth = async (url, options = {}) => {
 
   return response;
 };
-
-export default fetchWithAuth;

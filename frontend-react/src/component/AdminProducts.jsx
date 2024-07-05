@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import fetchWithAuth from "../util/fetchWithAuth";
+import { fetchWithAuth } from "../util/fetchWithAuth";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);

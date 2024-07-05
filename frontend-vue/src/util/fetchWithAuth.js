@@ -41,5 +41,3 @@ export const fetchWithAuth = async (url, options = {}) => {
 
   return response;
 };
-
-export default fetchWithAuth;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import fetchWithAuth from "../util/fetchWithAuth";
+import { fetchWithAuth } from "../util/fetchWithAuth";
 
 const AdminRoles = () => {
   const [roles, setRoles] = useState([]);

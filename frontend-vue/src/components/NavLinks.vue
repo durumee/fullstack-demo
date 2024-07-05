@@ -16,14 +16,14 @@
     <Logout
       class="flex items-center text-blue-600 hover:bg-blue-100 hover:text-blue-800 px-3 py-2 rounded-md transition duration-300 ease-in-out"
       @updateAuth="updateAuth">
-      <ArrowRightOnRectangleIcon class="w-5 h-5 mr-2" />
+      <ArrowLeftStartOnRectangleIcon class="w-5 h-5 mr-2" />
       로그아웃
     </Logout>
   </li>
   <li v-else class="my-2 md:my-0">
     <router-link to="/pages/login"
       class="flex items-center text-blue-600 hover:bg-blue-100 hover:text-blue-800 px-3 py-2 rounded-md transition duration-300 ease-in-out">
-      <ArrowLeftOnRectangleIcon class="w-5 h-5 mr-2" />
+      <ArrowLeftEndOnRectangleIcon class="w-5 h-5 mr-2" />
       로그인
     </router-link>
   </li>
@@ -37,8 +37,8 @@ import {
   UserIcon,
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
-  ArrowLeftOnRectangleIcon,
-  ArrowRightOnRectangleIcon
+  ArrowLeftEndOnRectangleIcon,
+  ArrowLeftStartOnRectangleIcon
 } from '@heroicons/vue/24/outline'
 import Logout from './Logout.vue'  // Logout 컴포넌트 import
 
