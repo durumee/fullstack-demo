@@ -26,8 +26,6 @@ const isAuthenticated = () => {
 const PrivateRoute = ({ element: Element, ...rest }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -159,7 +157,7 @@ function App() {
         <div className="container mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/pages/products" element={<Products />} />
+            <Route path="/pages/products" element={<PrivateRoute element={Products} />} />
             <Route path="/pages/login" element={<Login onLogin={handleLogin} />} />
             <Route path="/pages/member-info" element={<PrivateRoute element={MemberInfo} />} />
             <Route path="/pages/order-history" element={<PrivateRoute element={OrderHistory} />} />
