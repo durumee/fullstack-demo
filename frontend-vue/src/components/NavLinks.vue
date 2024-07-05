@@ -13,11 +13,12 @@
     </li>
   </template>
   <li v-if="isAuth" class="my-2 md:my-0">
-    <a href="#" @click.prevent="$emit('logout')"
-      class="flex items-center text-blue-600 hover:bg-blue-100 hover:text-blue-800 px-3 py-2 rounded-md transition duration-300 ease-in-out">
+    <Logout
+      class="flex items-center text-blue-600 hover:bg-blue-100 hover:text-blue-800 px-3 py-2 rounded-md transition duration-300 ease-in-out"
+      @updateAuth="updateAuth">
       <ArrowRightOnRectangleIcon class="w-5 h-5 mr-2" />
       로그아웃
-    </a>
+    </Logout>
   </li>
   <li v-else class="my-2 md:my-0">
     <router-link to="/pages/login"
@@ -39,13 +40,18 @@ import {
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon
 } from '@heroicons/vue/24/outline'
+import Logout from './Logout.vue'  // Logout 컴포넌트 import
 
 const props = defineProps({
-  isAuth: Boolean,
-  currentRoute: String
+  currentRoute: String,
+  isAuth: Boolean
 })
 
-const emit = defineEmits(['logout'])
+const emit = defineEmits(['updateAuth'])
+
+const updateAuth = (newValue) => {
+  emit('updateAuth', newValue)
+}
 
 const links = [
   { to: '/', icon: HomeIcon, label: '메인' },

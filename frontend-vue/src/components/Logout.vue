@@ -1,18 +1,15 @@
 <template>
-  <a href="#" @click.prevent="handleLogout" :class="className">
-    Logout
+  <a href="#" @click.prevent="handleLogout">
+    <slot></slot>
   </a>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 
-const props = defineProps({
-  className: String
-})
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
-const emit = defineEmits(['logout'])
+const emit = defineEmits(['updateAuth'])
 
 const router = useRouter()
 
@@ -21,8 +18,9 @@ const handleLogout = async () => {
 
   if (token) {
     try {
-      const response = await fetch("/invalidate-token", {
+      const response = await fetch(API_BASE_URL + "/invalidate-token", {
         method: "GET",
+        credentials: 'include',
         headers: {
           "Authorization": `Bearer ${token}`,
         },
@@ -30,7 +28,7 @@ const handleLogout = async () => {
 
       if (response.ok) {
         sessionStorage.removeItem("accessToken")
-        emit('logout')
+        emit('updateAuth', false)
         router.push("/")
       } else {
         console.error("Failed to logout")

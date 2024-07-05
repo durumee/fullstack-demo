@@ -56,6 +56,7 @@ const handleLogin = async () => {
   try {
     const response = await fetch(API_BASE_URL + "/token", {
       method: "POST",
+      credentials: 'include',
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },

@@ -1,7 +1,6 @@
 package com.nrzm.demo.auth.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nrzm.demo.auth.jwt.JwtProvider;
 import com.nrzm.demo.auth.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,7 +8,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,16 +17,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    @Value("${jwt.secret:your-very-long-secret-key-that-is-at-least-64-bytes-long-0123456789abcdef0123456789abcdef}")
-    private String secret;
+import static com.nrzm.demo.config.CookieConstants.REFRESH_TOKEN_PREFIX;
 
+public class CustomUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
     @Autowired
@@ -76,8 +70,12 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         // 리프레시 토큰 생성 및 쿠키에 추가
         String refreshToken = jwtProvider.createRefreshToken(userDetails.getUsername());
         String cookieName = jwtProvider.createRefreshTokenCookieName(userDetails.getUsername());
-        Cookie refreshTokenCookie = new Cookie("refreshToken_" + cookieName, refreshToken);
+        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_PREFIX + cookieName, refreshToken);
         refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setSecure(true); // HTTPS 사용 시 활성화, localhost, 127.0.0.1 에서는 예외 적용이 되는 편
+//        refreshTokenCookie.setPath("/");
+//        refreshTokenCookie.setAttribute("SameSite", "None"); // 크로스-사이트 요청 허용
+//        refreshTokenCookie.setMaxAge(24 * 60 * 60); // 1일 유효 (쿠키에 저장된 토큰이 애초에 1일 만료이므로 이중 처리)
         response.addCookie(refreshTokenCookie);
 
         // JSON 응답 생성

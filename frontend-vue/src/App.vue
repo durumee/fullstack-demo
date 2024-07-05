@@ -9,7 +9,7 @@
       <div v-if="isMenuOpen" class="fixed inset-0 bg-white z-40 p-4">
         <nav>
           <ul class="flex flex-col items-start pt-16">
-            <NavLinks :is-auth="isAuth" :current-route="currentRoute" @logout="handleLogout" />
+            <NavLinks :currentRoute="currentRoute" :isAuth="isAuth" @updateAuth="updateAuth" />
           </ul>
         </nav>
       </div>
@@ -19,7 +19,7 @@
     <nav v-else class="bg-white shadow-md">
       <div class="container mx-auto px-4">
         <ul class="flex justify-center items-center h-16">
-          <NavLinks :is-auth="isAuth" :current-route="currentRoute" @logout="handleLogout" />
+          <NavLinks :currentRoute="currentRoute" :isAuth="isAuth" @updateAuth="updateAuth" />
         </ul>
       </div>
     </nav>
@@ -63,10 +63,8 @@ const handleLogin = () => {
   checkAuth()
 }
 
-const handleLogout = () => {
-  sessionStorage.removeItem("accessToken")
-  isAuth.value = false
-  router.push('/pages/login')
+const updateAuth = (newValue) => {
+  isAuth.value = newValue
 }
 
 onMounted(() => {

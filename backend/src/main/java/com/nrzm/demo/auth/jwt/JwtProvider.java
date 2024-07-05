@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +18,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 
+import static com.nrzm.demo.config.CookieConstants.REFRESH_TOKEN_PREFIX;
+
 @Component
 public class JwtProvider {
     @Value("${jwt.secret:your-very-long-secret-key-that-is-at-least-64-bytes-long-0123456789abcdef0123456789abcdef}")
     private String secret;
-    @Value("${jwt.expiration:300000}") //1시간:3600000, 30초:30000
+    @Value("${jwt.expiration:300000}") //5분:300000
     private long expiration;
     @Value("${jwt.expiration:3600000}") //1시간:3600000, 30초:30000
     private long refreshExpiration;
@@ -123,7 +126,7 @@ public class JwtProvider {
 
     public String resolveRefreshToken(HttpServletRequest request, String usernameFromExpiredToken) {
         Cookie[] cookies = request.getCookies();
-        String cookieName = "refreshToken_" + createRefreshTokenCookieName(usernameFromExpiredToken);
+        String cookieName = REFRESH_TOKEN_PREFIX + createRefreshTokenCookieName(usernameFromExpiredToken);
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -134,5 +137,15 @@ public class JwtProvider {
         }
 
         return null;
+    }
+
+    public void removeRefreshTokenCookie(HttpServletResponse response, String bearerToken) {
+        String username = getSubjectFromExpiredToken(bearerToken);
+        String cookieName = REFRESH_TOKEN_PREFIX + createRefreshTokenCookieName(username);
+        Cookie refreshTokenCookie = new Cookie(cookieName, null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0);
+        response.addCookie(refreshTokenCookie);
     }
 }

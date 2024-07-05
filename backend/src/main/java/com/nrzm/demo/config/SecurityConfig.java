@@ -122,7 +122,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authenticationEntryPoint())   // 401 Unauthorized, 500 Internal Server Error 처리 관련
                 )
                 .addFilterAt(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtInvalidationFilter(), CustomUsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtInvalidationFilter(jwtProvider), CustomUsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userDetailsService), JwtInvalidationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
