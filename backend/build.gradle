@@ -63,7 +63,7 @@ task yarnBuild(type: Exec) {
 }
 
 // yarnBuild 태스크를 processResources 태스크 이전에 실행되도록 설정
-processResources.dependsOn yarnBuild
+// processResources.dependsOn yarnBuild
 
 // 프론트엔드 빌드 결과물을 백엔드 리소스 디렉토리로 복사
 task copyFrontendBuild(type: Copy) {
@@ -77,4 +77,4 @@ task copyFrontendBuild(type: Copy) {
 }
 
 // copyFrontendBuild 태스크를 processResources 태스크 이전에 실행되도록 설정
-processResources.dependsOn copyFrontendBuild
+// processResources.dependsOn copyFrontendBuild
