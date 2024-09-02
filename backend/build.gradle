@@ -43,38 +43,38 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-//def frontendType = 'vue'
-//def isWindows = System.properties['os.name'].toLowerCase().contains('windows')
-//def frontendDir = "$projectDir/../frontend-$frontendType"
-//
-//task yarnBuild(type: Exec) {
-//	workingDir frontendDir
-//
-//	if (isWindows) {
-//		commandLine 'cmd', '/c', 'yarn.cmd', 'build'
-//	} else {
-//		commandLine 'yarn', 'build'
-//	}
-//
-//	// 개발 환경에서만 실행되도록 조건 추가
-//	onlyIf {
-//		!project.hasProperty('prod') && !project.hasProperty('uat') && !project.hasProperty('stg')
-//	}
-//}
-//
-//// yarnBuild 태스크를 processResources 태스크 이전에 실행되도록 설정
-//processResources.dependsOn yarnBuild
-//
-//// 프론트엔드 빌드 결과물을 백엔드 리소스 디렉토리로 복사
-//task copyFrontendBuild(type: Copy) {
-//	from "$frontendDir/dist"
-//	into "$projectDir/src/main/resources/static"
-//
-//	// 개발 환경에서만 실행되도록 조건 추가
-//	onlyIf {
-//		!project.hasProperty('prod') && !project.hasProperty('uat') && !project.hasProperty('stg')
-//	}
-//}
-//
-//// copyFrontendBuild 태스크를 processResources 태스크 이전에 실행되도록 설정
-//processResources.dependsOn copyFrontendBuild
+def frontendType = 'vue'
+def isWindows = System.properties['os.name'].toLowerCase().contains('windows')
+def frontendDir = "$projectDir/../frontend-$frontendType"
+
+task yarnBuild(type: Exec) {
+    workingDir frontendDir
+
+    if (isWindows) {
+        commandLine 'cmd', '/c', 'yarn.cmd', 'build'
+    } else {
+        commandLine 'yarn', 'build'
+    }
+
+    // 개발 환경에서만 실행되도록 조건 추가
+    // onlyIf {
+    //     !project.hasProperty('prod') && !project.hasProperty('uat') && !project.hasProperty('stg')
+    // }
+}
+
+// yarnBuild 태스크를 processResources 태스크 이전에 실행되도록 설정
+processResources.dependsOn yarnBuild
+
+// 프론트엔드 빌드 결과물을 백엔드 리소스 디렉토리로 복사
+task copyFrontendBuild(type: Copy) {
+    from "$frontendDir/dist"
+    into "$projectDir/src/main/resources/static"
+
+    // 개발 환경에서만 실행되도록 조건 추가
+    // onlyIf {
+    //     !project.hasProperty('prod') && !project.hasProperty('uat') && !project.hasProperty('stg')
+    // }
+}
+
+// copyFrontendBuild 태스크를 processResources 태스크 이전에 실행되도록 설정
+processResources.dependsOn copyFrontendBuild
