@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Component
 @Transactional
-@Profile("dev") // 개발 프로파일에서만 실행되도록 설정 (CLI Run Config, --spring.profiles.active=dev)
+@Profile({"local", "dev"}) // 개발 프로파일에서만 실행되도록 설정 (CLI Run Config, --spring.profiles.active=dev)
 public class UserDataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;

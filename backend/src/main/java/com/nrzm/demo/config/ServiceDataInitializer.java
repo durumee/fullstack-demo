@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@Profile("dev")
+@Profile({"local", "dev"})
 public class ServiceDataInitializer {
 
     @Bean
